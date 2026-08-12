@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import BookCard from './components/BookCard'
 import BookDetails from './components/BookDetails'
-import bookLogo from './assets/book-finder.jpg'
 import './App.css'
 
 const BOOKS_PER_PAGE = 20
@@ -93,9 +92,7 @@ function App() {
       {/* Header */}
       <header className="header">
         <div className="header-title">
-          <div className="logo">
-            <img src={bookLogo} alt="Book Explorer logo" />
-          </div>
+          <div className="logo">📚</div>
 
           <div>
             <h1>Book Explorer</h1>

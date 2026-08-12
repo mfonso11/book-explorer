@@ -49,12 +49,7 @@ input {
   background: #111827;
   border-radius: 12px;
   overflow: hidden;
-}
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  font-size: 28px;
 }
 
 .header-title h1 {
@@ -456,8 +451,6 @@ input {
   font-size: 13px;
   font-weight: 500;
 }
-
-/* Hover */
 
 .page-button:hover {
   background: #d1d5db;
