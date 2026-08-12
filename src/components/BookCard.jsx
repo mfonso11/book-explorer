@@ -8,6 +8,7 @@ function BookCard({ book, onClick, isSelected }) {
       className={`book-card ${isSelected ? 'selected' : ''}`}
       onClick={() => onClick(book)}
     >
+      {/* Book Cover */}
       {coverUrl ? (
         <img
           src={coverUrl}
@@ -15,11 +16,16 @@ function BookCard({ book, onClick, isSelected }) {
           className="book-cover"
           onError={(event) => {
             event.currentTarget.style.display = 'none'
-            event.currentTarget.nextSibling.style.display = 'flex'
+
+            if (event.currentTarget.nextSibling) {
+              event.currentTarget.nextSibling.style.display =
+                'flex'
+            }
           }}
         />
       ) : null}
 
+      {/* No Cover */}
       <div
         className="no-cover"
         style={{ display: coverUrl ? 'none' : 'flex' }}
@@ -27,11 +33,13 @@ function BookCard({ book, onClick, isSelected }) {
         No Cover
       </div>
 
+      {/* Book Information */}
       <div className="book-info">
         <h3>{book.title || 'No Title'}</h3>
 
         <p className="author">
-          {book.author_name?.join(', ') || 'Unknown Author'}
+          {book.author_name?.join(', ') ||
+            'Unknown Author'}
         </p>
 
         <p className="year">

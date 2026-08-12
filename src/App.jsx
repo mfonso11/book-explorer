@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import BookCard from './components/BookCard'
 import BookDetails from './components/BookDetails'
+import bookLogo from './assets/book-finder.jpg'
 import './App.css'
 
 const BOOKS_PER_PAGE = 20
@@ -41,9 +42,8 @@ function App() {
         const data = await response.json()
 
         setBooks(data.docs || [])
-        setTotalBooks(data.num_found || 0)
+        setTotalBooks(data.numFound || 0)
 
-        // Automatically select the first book on the page
         if (data.docs && data.docs.length > 0) {
           setSelectedBook(data.docs[0])
         } else {
@@ -81,6 +81,7 @@ function App() {
     }
 
     setCurrentPage(page)
+
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -92,7 +93,9 @@ function App() {
       {/* Header */}
       <header className="header">
         <div className="header-title">
-          <div className="logo">📚</div>
+          <div className="logo">
+            <img src={bookLogo} alt="Book Explorer logo" />
+          </div>
 
           <div>
             <h1>Book Explorer</h1>
@@ -113,7 +116,7 @@ function App() {
         <button type="submit">Search</button>
       </form>
 
-      {/* Loading */}
+      {/* Loading State */}
       {loading && (
         <div className="status">
           <div className="loader"></div>
@@ -121,14 +124,14 @@ function App() {
         </div>
       )}
 
-      {/* Error */}
+      {/* Error State */}
       {error && (
         <div className="status error">
           <p>{error}</p>
         </div>
       )}
 
-      {/* Empty */}
+      {/* Empty State */}
       {!loading && !error && searchTerm && books.length === 0 && (
         <div className="status">
           <p>No books found.</p>
@@ -137,149 +140,165 @@ function App() {
 
       {/* Results */}
       {!loading && !error && books.length > 0 && (
-        <>
-          <div className="results-layout">
-            {/* Books */}
-            <div className="books-section">
-              <div className="results-header">
-                <h2>Search Results</h2>
+        <div className="results-layout">
+          {/* Books Section */}
+          <div className="books-section">
+            <div className="results-header">
+              <h2>Search Results</h2>
 
-                <span>
-                  Showing{' '}
-                  {(currentPage - 1) * BOOKS_PER_PAGE + 1}-
-                  {Math.min(
-                    currentPage * BOOKS_PER_PAGE,
-                    totalBooks
-                  )}{' '}
-                  of {totalBooks.toLocaleString()} books
-                </span>
-              </div>
-
-              <div className="book-grid">
-                {books.map((book, index) => (
-                  <BookCard
-                    key={`${book.key}-${index}`}
-                    book={book}
-                    onClick={setSelectedBook}
-                    isSelected={selectedBook?.key === book.key}
-                  />
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-  <div className="pagination-wrapper">
-    <div className="pagination">
-      <button
-        className="pagination-button"
-        onClick={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        Previous
-      </button>
-
-      <div className="page-numbers">
-        {Array.from(
-          { length: totalPages },
-          (_, index) => index + 1
-        )
-          .filter((page) => {
-            return (
-              page === 1 ||
-              page === totalPages ||
-              Math.abs(page - currentPage) <= 2
-            )
-          })
-          .map((page, index, pages) => {
-            const previousPage = pages[index - 1]
-
-            return (
-              <span key={page}>
-                {previousPage &&
-                  page - previousPage > 1 && (
-                    <span className="page-ellipsis">
-                      ...
-                    </span>
-                  )}
-
-                <button
-                  className={`page-button ${
-                    currentPage === page ? 'active' : ''
-                  }`}
-                  onClick={() => goToPage(page)}
-                >
-                  {page}
-                </button>
+              <span>
+                Showing{' '}
+                {(currentPage - 1) * BOOKS_PER_PAGE + 1}-
+                {Math.min(
+                  currentPage * BOOKS_PER_PAGE,
+                  totalBooks
+                )}{' '}
+                of {totalBooks.toLocaleString()} books
               </span>
-            )
-          })}
-      </div>
-
-      <button
-        className="pagination-button"
-        onClick={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        Next
-      </button>
-    </div>
-
-    <div className="go-to-page">
-      <label htmlFor="page-input">Go to page:</label>
-
-      <input
-        id="page-input"
-        type="number"
-        min="1"
-        max={totalPages}
-        placeholder={currentPage}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            const page = Number(event.target.value)
-
-            if (page >= 1 && page <= totalPages) {
-              goToPage(page)
-              event.target.value = ''
-            }
-          }
-        }}
-      />
-
-      <button
-        className="go-to-page-button"
-        onClick={() => {
-          const input = document.getElementById('page-input')
-          const page = Number(input.value)
-
-          if (page >= 1 && page <= totalPages) {
-            goToPage(page)
-            input.value = ''
-          }
-        }}
-      >
-        Go
-      </button>
-    </div>
-  </div>
-)}
             </div>
 
-            {/* Details */}
-            <aside className="details-section">
-              {selectedBook ? (
-                <BookDetails book={selectedBook} />
-              ) : (
-                <div className="details-placeholder">
-                  <div className="placeholder-icon">📖</div>
-                  <h2>Select a book</h2>
-                  <p>
-                    Click on a book to see its details here.
-                  </p>
-                </div>
-              )}
-            </aside>
+            <div className="book-grid">
+              {books.map((book, index) => (
+                <BookCard
+                  key={`${book.key}-${index}`}
+                  book={book}
+                  onClick={setSelectedBook}
+                  isSelected={selectedBook?.key === book.key}
+                />
+              ))}
+            </div>
           </div>
-        </>
+
+          {/* Details Section */}
+          <aside className="details-section">
+            {selectedBook ? (
+              <BookDetails book={selectedBook} />
+            ) : (
+              <div className="details-placeholder">
+                <div className="placeholder-icon">📖</div>
+
+                <h2>Select a book</h2>
+
+                <p>
+                  Click on a book to see its details here.
+                </p>
+              </div>
+            )}
+          </aside>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination-wrapper">
+              <div className="pagination">
+                {/* Previous */}
+                <button
+                  className="pagination-button"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                <div className="page-numbers">
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  )
+                    .filter((page) => {
+                      return (
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 2
+                      )
+                    })
+                    .map((page, index, pages) => {
+                      const previousPage = pages[index - 1]
+
+                      return (
+                        <span key={page}>
+                          {previousPage &&
+                            page - previousPage > 1 && (
+                              <span className="page-ellipsis">
+                                ...
+                              </span>
+                            )}
+
+                          <button
+                            className={`page-button ${
+                              currentPage === page
+                                ? 'active'
+                                : ''
+                            }`}
+                            onClick={() => goToPage(page)}
+                          >
+                            {page}
+                          </button>
+                        </span>
+                      )
+                    })}
+                </div>
+
+                {/* Next */}
+                <button
+                  className="pagination-button"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+
+              {/* Go To Page */}
+              <div className="go-to-page">
+                <label htmlFor="page-input">
+                  Go to page:
+                </label>
+
+                <input
+                  id="page-input"
+                  type="number"
+                  min="1"
+                  max={totalPages}
+                  placeholder={currentPage}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      const page = Number(event.target.value)
+
+                      if (
+                        page >= 1 &&
+                        page <= totalPages
+                      ) {
+                        goToPage(page)
+                        event.target.value = ''
+                      }
+                    }
+                  }}
+                />
+
+                <button
+                  className="go-to-page-button"
+                  onClick={() => {
+                    const input =
+                      document.getElementById('page-input')
+
+                    const page = Number(input.value)
+
+                    if (
+                      page >= 1 &&
+                      page <= totalPages
+                    ) {
+                      goToPage(page)
+                      input.value = ''
+                    }
+                  }}
+                >
+                  Go
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

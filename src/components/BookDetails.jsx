@@ -5,6 +5,7 @@ function BookDetails({ book }) {
 
   return (
     <div className="book-details">
+      {/* Large Cover */}
       <div className="details-cover-container">
         {coverUrl ? (
           <img
@@ -13,7 +14,11 @@ function BookDetails({ book }) {
             className="details-cover"
             onError={(event) => {
               event.currentTarget.style.display = 'none'
-              event.currentTarget.nextSibling.style.display = 'flex'
+
+              if (event.currentTarget.nextSibling) {
+                event.currentTarget.nextSibling.style.display =
+                  'flex'
+              }
             }}
           />
         ) : null}
@@ -26,18 +31,23 @@ function BookDetails({ book }) {
         </div>
       </div>
 
+      {/* Book Information */}
       <div className="details-content">
-        <p className="details-label">SELECTED BOOK</p>
+        <p className="details-label">
+          SELECTED BOOK
+        </p>
 
         <h2>{book.title || 'No Title'}</h2>
 
         <p className="details-author">
-          {book.author_name?.join(', ') || 'Unknown Author'}
+          {book.author_name?.join(', ') ||
+            'Unknown Author'}
         </p>
 
         <div className="details-info">
           <div>
             <span>First Published</span>
+
             <strong>
               {book.first_publish_year || 'Unknown'}
             </strong>
@@ -45,6 +55,7 @@ function BookDetails({ book }) {
 
           <div>
             <span>Number of Editions</span>
+
             <strong>
               {book.edition_count || 0}
             </strong>
