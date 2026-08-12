@@ -16,50 +16,53 @@ function App() {
   const [selectedBook, setSelectedBook] = useState(null)
 
   useEffect(() => {
-    if (!searchTerm.trim()) {
+  if (!searchTerm.trim()) {
+    setBooks([])
+    setTotalBooks(0)
+    setSelectedBook(null)
+    return
+  }
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const response = await fetch(
+        `https://openlibrary.org/search.json?q=${encodeURIComponent(
+          searchTerm
+        )}&page=${currentPage}&limit=${BOOKS_PER_PAGE}&fields=key,title,author_name,first_publish_year,cover_i,edition_count`
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch books.')
+      }
+
+      const data = await response.json()
+
+      const totalResults =
+        data.num_found ?? data.numFound ?? 0
+
+      setBooks(data.docs || [])
+      setTotalBooks(totalResults)
+
+      if (data.docs && data.docs.length > 0) {
+        setSelectedBook(data.docs[0])
+      } else {
+        setSelectedBook(null)
+      }
+    } catch (error) {
+      setError(error.message)
       setBooks([])
       setTotalBooks(0)
       setSelectedBook(null)
-      return
+    } finally {
+      setLoading(false)
     }
+  }
 
-    const fetchBooks = async () => {
-      try {
-        setLoading(true)
-        setError('')
-
-        const response = await fetch(
-          `https://openlibrary.org/search.json?q=${encodeURIComponent(
-            searchTerm
-          )}&page=${currentPage}&limit=${BOOKS_PER_PAGE}&fields=key,title,author_name,first_publish_year,cover_i,edition_count`
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch books.')
-        }
-
-        const data = await response.json()
-
-        setBooks(data.docs || [])
-        setTotalBooks(data.num_Found || 0)
-
-        if (data.docs && data.docs.length > 0) {
-          setSelectedBook(data.docs[0])
-        } else {
-          setSelectedBook(null)
-        }
-      } catch (error) {
-        setError(error.message)
-        setBooks([])
-        setTotalBooks(0)
-        setSelectedBook(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchBooks()
-  }, [searchTerm, currentPage])
+  fetchBooks()
+}, [searchTerm, currentPage])
 
   const handleSearch = (event) => {
     event.preventDefault()
