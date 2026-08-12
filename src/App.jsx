@@ -96,7 +96,7 @@ function App() {
 
           <div>
             <h1>Book Explorer</h1>
-            <p>Discover your next great read.</p>
+            <p>Your personal book finder</p>
           </div>
         </div>
       </header>
