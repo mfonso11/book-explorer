@@ -31,7 +31,7 @@ function App() {
         const response = await fetch(
           `https://openlibrary.org/search.json?q=${encodeURIComponent(
             searchTerm
-          )}&page=${currentPage}&limit=${BOOKS_PER_PAGE}`
+          )}&page=${currentPage}&limit=${BOOKS_PER_PAGE}&fields=key,title,author_name,first_publish_year,cover_i,edition_count`
         )
 
         if (!response.ok) {
@@ -41,7 +41,7 @@ function App() {
         const data = await response.json()
 
         setBooks(data.docs || [])
-        setTotalBooks(data.numFound || 0)
+        setTotalBooks(data.num_Found || 0)
 
         if (data.docs && data.docs.length > 0) {
           setSelectedBook(data.docs[0])
